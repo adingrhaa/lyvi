@@ -7,6 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Master_product extends Model
 {
+    use HasFactory;
+
+    protected $fillable = [
+        'nama_produk',
+        'harga_produk',
+        'detail_produk',
+        'foto_produk',
+        'bahan_produk',
+        'cara_pemakaian',
+        'redirect' // jika kolom redirect ada
+    ];
     protected $table = 'master_products';
 
     public function bundlings()

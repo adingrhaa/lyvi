@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kategori;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class KategoriController extends Controller
 {
@@ -12,9 +13,18 @@ class KategoriController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('admin.auth')->only(['store', 'update', 'destroy']);
+    }
+    
     public function index()
     {
-        //
+        $kategori = Kategori::all();
+ 
+        return response()->json([
+            'data' => $kategori
+        ]);
     }
 
     /**
@@ -22,7 +32,7 @@ class KategoriController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
     }
@@ -35,7 +45,24 @@ class KategoriController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'nama_kategori' => 'required',
+        ]);
+ 
+        if ($validator->fails()){
+            return response()->json(
+                $validator->errors(),
+                422
+            );
+        };
+ 
+        $input = $request->all();
+       
+        $kategori = Kategori::create($input);
+ 
+        return response()->json([
+            'data' => $kategori
+        ]);
     }
 
     /**
@@ -46,7 +73,9 @@ class KategoriController extends Controller
      */
     public function show(Kategori $kategori)
     {
-        //
+        return response()->json([
+            'data' => $kategori 
+        ]);
     }
 
     /**
@@ -69,7 +98,26 @@ class KategoriController extends Controller
      */
     public function update(Request $request, Kategori $kategori)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'nama_kategori' => 'required',           
+        ]);
+   
+        if ($validator->fails()){
+            return response()->json(
+                $validator->errors(),
+                422
+            );
+        }
+   
+        $input = $request->all();
+   
+        // Memperbarui data kategori
+        $kategori->update($input);
+   
+        return response()->json([
+            'message' => 'success',
+            'data' => $kategori
+        ]);
     }
 
     /**
@@ -80,6 +128,10 @@ class KategoriController extends Controller
      */
     public function destroy(Kategori $kategori)
     {
-        //
+        $kategori->delete();
+ 
+        return response()->json([
+            'message' => 'success'
+        ]);
     }
 }

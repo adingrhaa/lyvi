@@ -16,10 +16,11 @@ class AdminAuth
      */
     public function handle($request, Closure $next)
     {
-        if (!Auth::guard('admin')->check()) {
+        if (!Auth::guard('admin_api')->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
         return $next($request);
     }
+
 }

@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 
 class MasterProdukBundlingController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('admin.auth')->only(['store', 'update', 'destroy']);
+    }
     /**
      * Display a listing of the resource.
      *
