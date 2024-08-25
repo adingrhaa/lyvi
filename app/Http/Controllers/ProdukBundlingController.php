@@ -18,12 +18,21 @@ class ProdukBundlingController extends Controller
     {
         $this->middleware('admin.auth')->only(['store', 'update', 'destroy']);
     }
-    public function index()
+    public function index(Request $request)
     {
-        $produk_bundling = Produk_bundling::all();
- 
+        // Menentukan jumlah item per halaman, defaultnya 10 jika tidak ada parameter 'per_page'
+        $perPage = $request->get('per_page', 10);
+
+        // Mengambil data produk dengan pagination
+        $produk_bundlings = Produk_bundling::paginate($perPage);
+
+        // Mengembalikan respon JSON dengan data produk yang telah dipaginate
         return response()->json([
-            'data' => $produk_bundling
+            'data' => $produk_bundlings->items(), // Data item pada halaman saat ini
+            'current_page' => $produk_bundlings->currentPage(), // Halaman saat ini
+            'last_page' => $produk_bundlings->lastPage(), // Halaman terakhir
+            'total' => $produk_bundlings->total(), // Total item
+            'per_page' => $produk_bundlings->perPage(), // Item per halaman
         ]);
     }
 
@@ -51,7 +60,7 @@ class ProdukBundlingController extends Controller
             'detail_bundle' => 'required',
             'foto_bundle' => 'required|file|mimes:jpg,jpeg,png',
             'pilih_produk' => 'required|array',
-            'redirect' => 'required',
+            'redirect' => 'required|array',
         ]);
  
         if ($validator->fails()){
@@ -83,7 +92,9 @@ class ProdukBundlingController extends Controller
             // Simpan nama file ke dalam input untuk disimpan di database
             $input['foto_bundle'] = $nama_gambar;
         }
-       
+
+        $input['redirect'] = $request->input('redirect');
+
         $produk_bundling = Produk_bundling::create($input);
  
         return response()->json([
@@ -98,10 +109,16 @@ class ProdukBundlingController extends Controller
      * @param  \App\Models\Produk_bundling  $produk_bundling
      * @return \Illuminate\Http\Response
      */
-    public function show(Produk_bundling $produk_bundling)
+    public function show($id)
     {
-        $produk_bundling = Produk_bundling::all();
- 
+        $produk_bundling = Produk_bundling::find($id);
+
+        if (!$produk_bundling) {
+            return response()->json([
+                'message' => 'Produk bundling tidak ditemukan.'
+            ], 404);
+        }
+
         return response()->json([
             'data' => $produk_bundling
         ]);
@@ -165,7 +182,12 @@ class ProdukBundlingController extends Controller
             // Simpan nama file ke dalam input untuk disimpan di database
             $input['foto_bundle'] = $nama_gambar;
         }
-   
+        
+        if (isset($input['redirect'])) {
+            // Konversi redirect menjadi JSON jika ada
+            $input['redirect'] = $request->input('redirect');
+        }
+
         $produk_bundling->update($input);
    
         return response()->json([

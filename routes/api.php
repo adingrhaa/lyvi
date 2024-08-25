@@ -4,8 +4,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\HitungProdukController;
 use App\Http\Controllers\MasterProductController;
 use App\Http\Controllers\ProdukBundlingController;
+use App\Http\Controllers\HitungPengunjungController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +30,7 @@ Route::middleware('admin.auth')->group(function () {
     Route::post('master-products', [MasterProductController::class, 'store'])->name('master-products.store');
     Route::put('master-products/{master_product}', [MasterProductController::class, 'update'])->name('master-products.update');    
     Route::delete('master-products/{master_product}', [MasterProductController::class, 'destroy'])->name('master-products.destroy');
+    Route::get('count-products', [HitungProdukController::class, 'countProducts']);
 });
     Route::get('master-products', [MasterProductController::class, 'index'])->name('master-products.index');
     Route::get('master-products/{master_product}', [MasterProductController::class, 'show'])->name('master-products.show');
@@ -39,7 +42,7 @@ Route::middleware('admin.auth')->group(function () {
     Route::delete('produk-bundlings/{produk-bundling}', [ProdukBundlingController::class, 'destroy'])->name('produk-bundlings.destroy');
 });
     Route::get('produk-bundlings', [ProdukBundlingController::class, 'index'])->name('produk-bundlings.index');
-    Route::get('produk-bundlings/{produk-bundlings}', [ProdukBundlingController::class, 'show'])->name('produk-bundlings.show');
+    Route::get('produk-bundlings/{produk_bundling}', [ProdukBundlingController::class, 'show'])->name('produk-bundlings.show');
 
 //kategoris
 Route::middleware('admin.auth')->group(function () {
@@ -48,6 +51,8 @@ Route::middleware('admin.auth')->group(function () {
     Route::delete('kategoris/{kategori}', [KategoriController::class, 'destroy'])->name('kategoris.destroy');
 });
     Route::get('kategoris', [KategoriController::class, 'index'])->name('kategoris.index');
-    Route::get('kategoris/{kategoris}', [KategoriController::class, 'show'])->name('kategoris.show');
+    Route::get('kategoris/{kategori}', [KategoriController::class, 'show'])->name('kategoris.show');
 
-
+//Hitung Pengunjung
+Route::post('/track-visitor', [HitungPengunjungController::class, 'trackVisitor']);
+Route::get('/visitor-stats', [HitungPengunjungController::class, 'getVisitorStatsApi']);

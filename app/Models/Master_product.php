@@ -9,6 +9,9 @@ class Master_product extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'redirect' => 'array',
+    ];
     protected $fillable = [
         'nama_produk',
         'harga_produk',
@@ -16,6 +19,7 @@ class Master_product extends Model
         'foto_produk',
         'bahan_produk',
         'cara_pemakaian',
+        'kategori',
         'redirect' // jika kolom redirect ada
     ];
     protected $table = 'master_products';
