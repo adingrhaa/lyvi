@@ -23,6 +23,7 @@ class Produk_bundling extends Model
 
     protected $casts = [
         'pilih_produk' => 'array',
+        'redirect' => 'array'
     ];
 
     public function masterBundling()
